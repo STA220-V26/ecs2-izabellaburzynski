@@ -74,9 +74,22 @@ tar_target(csv_files, zip::unzip(zipdata)),
     tar_target(dt, fread(path)),
     names = name,
     descriptions = NULL
-  )
+  ),
 
   # TODO: something related to codebook should be added here
-
+tar_target(codebook, get_codebook())
   # TODO: Something related to data_scans should be added here
 )
+
+
+#3.3, not sure if to put it here
+#let's have a closer look at dtpatient, it can be read with tar_read 
+#but we use tar_load, to have the dataset be available in the R session with the same name
+tar_load(dt_patients)
+
+head(dt_patients)
+View(dt_patients)
+summary(dt_patients)
+
+dplyr::glimpse(dt_patients)
+#skimr::skim()
