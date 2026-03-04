@@ -27,6 +27,7 @@ install.packages(setdiff(pkgs, row.names(installed.packages())))
 invisible(lapply(pkgs, library, character.only = TRUE))
 
 # Set target options:
+#"loading" packages for the separate target session, using qs to format
 tar_option_set(
   # Packages that your targets need for their tasks:
   packages = pkgs,
@@ -34,7 +35,13 @@ tar_option_set(
 )
 
 # Run the R scripts stored in the R/ folder where your have stored your custom functions:
+#reads everything under R folder
 tar_source()
+
+#if we run tar_make()
+#"skipped pipeline" because nothing changed
+
+#tar_visnetwork visualizes what would happen if updated
 
 # We first download the data health care data of interest
 if (!fs::file_exists("data.zip")) {
@@ -55,18 +62,19 @@ list(
   # make the zipdata object refer to the data.zip file path
   tar_target(zipdata, "data.zip", format = "file"),
 
+
   # TODO: Something related to zip should be added here:
   # And this comment should be replaced by something more useful
-tar_target(csv_files, zip::unzip(zipdata))
+tar_target(csv_files, zip::unzip(zipdata)),
 
   # TODO: uncomment this section when instructed
-  # tar_map(
-  #  values = tibble::tibble(path = dir("data-fixed", full.names = TRUE)) |>
-  #    dplyr::mutate(name = tools::file_path_sans_ext(basename(path))),
-  #  tar_target(dt, fread(path)),
-  #  names = name,
-  #  descriptions = NULL
-  #),
+   tar_map(
+    values = tibble::tibble(path = dir("data-fixed", full.names = TRUE)) |>
+      dplyr::mutate(name = tools::file_path_sans_ext(basename(path))),
+    tar_target(dt, fread(path)),
+    names = name,
+    descriptions = NULL
+  )
 
   # TODO: something related to codebook should be added here
 
